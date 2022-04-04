@@ -2,6 +2,10 @@
 
 static const char FILE_PATH[] = "examples/return_3.c";
 
+enum Tokens {
+    OPEN_BRACE = 0, CLOSE_BRACE, OPEN_PAR, CLOSE_PAR, SEMICOLON, INT_KW, RET_KW, IDENTIFIER, INT_LITERAL
+};
+
 int main(void)
 {
     FILE *file;
@@ -19,5 +23,6 @@ int main(void)
     }
 
     fclose(file);
+
     return 0;
 }
