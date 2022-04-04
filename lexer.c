@@ -5,17 +5,17 @@ static const char FILE_PATH[] = "examples/return_3.c";
 int main(void)
 {
     FILE *file;
-    int i = 0;
+    char c;
 
     file = fopen(FILE_PATH, "r");
 
     while (1) {
-        i = fgetc(file);
+        c = fgetc(file);
  
         if (feof(file))
             break;
  
-        printf("%c", i);
+        printf("%c", c);
     }
 
     fclose(file);
