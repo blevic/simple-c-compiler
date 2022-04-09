@@ -1,4 +1,4 @@
-FILE_PATH = "examples/return_3.c"
+FILE_PATH = "examples/valid/return_3.c"
 
 
 def is_space_char(c):
@@ -14,7 +14,7 @@ def is_digit(c):
 
 
 def is_letter(c):
-    return c in "abcdefghijklmnopqrstuvwxyz"
+    return c.isalpha()
 
 
 def tokenize(file_path):
