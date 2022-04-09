@@ -10,7 +10,7 @@ def is_special_char(c):
 
 
 def is_digit(c):
-    return c in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    return c.isdigit()
 
 
 def is_letter(c):
