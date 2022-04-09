@@ -2,7 +2,7 @@ FILE_PATH = "examples/valid/return_3.c"
 
 
 def is_space_char(c):
-    return c in [' ', '\n', '\t']
+    return c.isspace()
 
 
 def is_special_char(c):
