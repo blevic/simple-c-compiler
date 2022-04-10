@@ -1,6 +1,3 @@
-FILE_PATH = "examples/valid/multi_digit.c"
-
-
 from enum import Enum
 from multiprocessing.dummy import Value
 
@@ -170,5 +167,6 @@ def lex(file_path):
 
 
 if __name__ == '__main__':
-    for e in lex(FILE_PATH):
+    file = "examples/valid/multi_digit.c"
+    for e in lex(file):
         print(e.text, "  ->  " , e.type)
