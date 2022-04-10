@@ -44,7 +44,7 @@ def is_underscore(c):
 
 
 def is_hexa(s):
-    return len(s) > 2 and s[:2].lower() == '0x' and all(is_digit(c) or c.lower() in 'abcdef' for c in s[:2])
+    return len(s) > 2 and s[:2].lower() == '0x' and all(is_digit(c) or c.lower() in 'abcdef' for c in s[2:])
 
 
 def is_identifier(s):
