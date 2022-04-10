@@ -1,6 +1,24 @@
 FILE_PATH = "examples/valid/multi_digit.c"
 
 
+from enum import Enum
+from multiprocessing.dummy import Value
+
+
+class TokenType(Enum):
+    OPEN_BRACE = 1
+    CLOSE_BRACE = 2
+    OPEN_PARENTHESIS = 3
+    CLOSE_PARENTHESIS = 4
+    SEMICOLON = 5
+    INT_KEYWORD = 6
+    RETURN_KEYWORD = 7
+    IDENTIFIER = 8
+    INTEGER_LITERAL_DECIMAL = 9
+    INTEGER_LITERAL_HEXA = 10
+    UNKNOWN = 11
+
+
 def is_space(c):
     return c.isspace()
 
@@ -23,6 +41,15 @@ def is_double_quotes(c):
 
 def is_underscore(c):
     return c == '_'
+
+
+def is_hexa(s):
+    return len(s) > 2 and s[:2].lower() == '0x' and all(is_digit(c) or c.lower() in 'abcdef' for c in s[:2])
+
+
+def is_identifier(s):
+    return len(s) > 0 and (is_letter(s[0]) or is_underscore(s[0])) and all(is_letter(c) or is_digit(c) or is_underscore(c) for c in s[1:])
+
 
 def tokenize(file_path):
     flat = ""
@@ -108,5 +135,40 @@ def tokenize(file_path):
     return tokens
 
 
+class Token:
+    def __init__(self, token_text):
+        self.text = token_text
+        self.type = self.token_type()
+    
+    def token_type(self):
+        if self.text == "{":
+            return TokenType.OPEN_BRACE
+        elif self.text == "}":
+            return TokenType.CLOSE_BRACE
+        elif self.text == "(":
+            return TokenType.OPEN_PARENTHESIS
+        elif self.text == ")":
+            return TokenType.CLOSE_PARENTHESIS
+        elif self.text == ";":
+            return TokenType.SEMICOLON
+        elif self.text == "int":
+            return TokenType.INT_KEYWORD
+        elif self.text == "return":
+            return TokenType.RETURN_KEYWORD
+        elif is_identifier(self.text):
+            return TokenType.IDENTIFIER
+        elif is_digit(self.text):
+            return TokenType.INTEGER_LITERAL_DECIMAL
+        elif is_hexa(self.text):
+            return TokenType.INTEGER_LITERAL_HEXA
+        else:
+            return TokenType.UNKNOWN
+
+
+def lex(file_path):
+    return [Token(t) for t in tokenize(file_path)]
+
+
 if __name__ == '__main__':
-    print(tokenize(FILE_PATH))
+    for e in lex(FILE_PATH):
+        print(e.text, "  ->  " , e.type)
