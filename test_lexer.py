@@ -19,5 +19,14 @@ class TestLexer(unittest.TestCase):
             self.assertIsInstance(tokens, list)
             self.assertTrue(all(isinstance(t, str) for t in tokens))
 
+    def test_is_hexa(self):
+        self.assertTrue(lexer.is_hexa('0x1945abcDC'))
+        self.assertTrue(lexer.is_hexa('0X123'))
+        self.assertTrue(lexer.is_hexa('0x00a'))
+        self.assertFalse(lexer.is_hexa('0x123abcdefg'))
+        self.assertFalse(lexer.is_hexa('0xx'))
+        self.assertFalse(lexer.is_hexa('0x'))
+        self.assertFalse(lexer.is_hexa('00x12'))
+
 if __name__ == '__main__':
     unittest.main()
