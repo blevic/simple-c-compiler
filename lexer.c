@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 2048
+#define MAX_TOKENS 1000
 
 static const char FILE_PATH[] = "examples/valid/return_3.c";
 
@@ -53,20 +54,56 @@ int main(void)
 
     Token *head = NULL;
     Token *tail = NULL;
-    Token *n;
+    Token *t;
+
+    int token_count = 0;
+    char **strings;
+    strings = malloc(MAX_TOKENS * sizeof (char *));
+
+    int length;
+
+    char buffer[BUFFER_SIZE];
+    int buffer_pos = 0;
 
     file = fopen(FILE_PATH, "r");
 
+    t = createToken("ABC");
+    insert(&head, t);
+    tail = t;
+
     while (1) {
+        // next character in file
         c = fgetc(file);
- 
-        if (feof(file))
+        
+        // quit when end-of-file
+        if (feof(file)) {
             break;
- 
-        printf("%c", c);
+        }
+
+        // append character to buffer
+        buffer[buffer_pos++] = c;
+        buffer[buffer_pos] = '\0';
+
+        // allocate memory for string and copy buffer into it
+        length = strlen(buffer);
+        strings[token_count] = malloc(length*sizeof(char));
+        strcpy(strings[token_count], buffer);
+
+        // create token as linked list pointing to the saved strings
+        t = createToken(strings[token_count++]);
+        insert(&tail->next, t);
+        tail = t;
     }
 
     fclose(file);
+
+    printf("\n\n");
+    printTokens(head);
+
+    for (int i = 0; i < MAX_TOKENS; i++) {
+        free(strings[i]);
+    }
+    free(strings);
 
     return 0;
 }
