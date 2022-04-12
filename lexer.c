@@ -152,6 +152,7 @@ int main(void)
 
     char buffer[BUFFER_SIZE];
     int buffer_pos = 0;
+    buffer[buffer_pos] = '\0';
 
     int in_digit = 0;
     int in_quotes = 0;
@@ -164,43 +165,203 @@ int main(void)
     tail = t;
 
     while (1) {
-        // next character in file
         c = fgetc(file);
         
-        // quit when end-of-file
         if (feof(file)) {
             break;
         }
 
-        // operations
         if (in_digit) {
-            ;
+            if (is_digit(c) || is_letter(c)) {
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+            }
+            else if (is_space(c)) {
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos] = '\0';
+
+                in_digit = 0;
+            }
+            else if (is_double_quotes((c))) {
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+
+                in_digit = 0;
+                in_quotes = 1;
+            }
+            else if (is_special(c)) {
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos] = '\0';
+
+                in_digit = 0;
+            }
+            else {
+                printf("Tokenizer (in-digit) got an unidentified character!\n");
+                return -1;
+            }
         }
         else if (in_quotes) {
-            ;
+            buffer[buffer_pos++] = c;
+            buffer[buffer_pos] = '\0';
+            if (is_double_quotes(c)) {
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos] = '\0';
+
+                in_quotes = 0;
+            }
         } 
         else if (in_identifier) {
-            ;
+            if (is_digit(c) || is_letter(c) || is_underscore(c)) {
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+            }
+            else if (is_space(c)) {
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos] = '\0';
+
+                in_identifier = 0;
+            }
+            else if (is_double_quotes(c)) {
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+
+                in_identifier = 0;
+                in_quotes = 1;
+            }
+            else if (is_special(c)) {
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos] = '\0';
+
+                in_identifier = 0;
+            }
+            else {
+                printf("Tokenizer (in-identifier) got an unidentified character!\n");
+                return -1;
+            }
         }
         else {
-            ;
+            if (is_space(c)) {
+                ;
+            }
+            else if (is_digit(c)) {
+                in_digit = 1;
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+            }
+            else if (is_double_quotes(c)) {
+                in_quotes = 1;
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+            }
+            else if (is_letter(c) || is_underscore(c)) {
+                in_identifier = 1;
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+            }
+            else if (is_special(c)) {
+                buffer[buffer_pos++] = c;
+                buffer[buffer_pos] = '\0';
+
+                length = strlen(buffer);
+                strings[token_count] = malloc(length*sizeof(char));
+                strcpy(strings[token_count], buffer);
+                t = createToken(strings[token_count++]);
+                insert(&tail->next, t);
+                tail = t;
+
+                buffer_pos = 0;
+                buffer[buffer_pos] = '\0';
+            }
+            else {
+                printf("Tokenizer (first-digit) got an unidentified character!\n");
+                return -1;
+            }
         }
 
 
-        // append character to buffer
-        buffer[buffer_pos++] = c;
-        buffer[buffer_pos] = '\0';
+    }
 
-        // allocate memory for string and copy buffer into it
+    if (buffer[buffer_pos] != '\0') {
         length = strlen(buffer);
         strings[token_count] = malloc(length*sizeof(char));
         strcpy(strings[token_count], buffer);
-
-        // create token as linked list pointing to the saved strings
         t = createToken(strings[token_count++]);
         insert(&tail->next, t);
         tail = t;
-    }
+    } 
 
     fclose(file);
 
