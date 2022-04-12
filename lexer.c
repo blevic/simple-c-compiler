@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define BUFFER_SIZE 2048
 #define MAX_TOKENS 1000
@@ -65,6 +66,75 @@ void printTokens(Token *head) {
     }
 }
 
+
+int is_space(char c) {
+    return c == ' ' || c == '\n' || c == '\t';
+}
+
+
+int is_special(char c) {
+    return c == '(' || c == ')' || c == '{' || c == '}' || c == '[' ||
+           c == ']' || c == ',' || c == ';' || c == '+' || c == '-';
+}
+
+
+int is_digit(char c) {
+    return isdigit(c);
+}
+
+
+int is_letter(char c) {
+    return isalpha(c);
+}
+
+int is_double_quotes(char c) {
+    return c == '"';
+}
+
+int is_underscore(char c) {
+    return c == '_';
+}
+
+int is_hexa(char *s, int size) {
+    if (size < 3) {
+        return 0;
+    }
+
+    if (s[0] != '0' || (s[1] != 'x' && s[1] != 'X')) {
+        return 0;
+    }
+
+    for (int i = 2; i < size; i++) {
+        if (!isxdigit(s[i])) {
+            return 0;
+        } 
+    }
+
+    return 1;
+}
+
+int is_identifier(char *s, int size) {
+    if (size < 1) {
+        return 0;
+    }
+
+    if (!is_letter(s[0] && !is_underscore(s[0]))) {
+        return 0;
+    }
+
+    for (int i = 1; i < size; i++) {
+        if (!is_digit(s[i]) && !is_letter(s[i]) && !is_underscore(s[i])) {
+            return 0;
+        } 
+    }
+
+    return 1;
+}
+
+
+
+
+
 int main(void)
 {
     FILE *file;
@@ -83,9 +153,13 @@ int main(void)
     char buffer[BUFFER_SIZE];
     int buffer_pos = 0;
 
+    int in_digit = 0;
+    int in_quotes = 0;
+    int in_identifier = 0;
+
     file = fopen(FILE_PATH, "r");
 
-    t = createToken("ABC");
+    t = createToken("root");
     insert(&head, t);
     tail = t;
 
@@ -97,6 +171,21 @@ int main(void)
         if (feof(file)) {
             break;
         }
+
+        // operations
+        if (in_digit) {
+            ;
+        }
+        else if (in_quotes) {
+            ;
+        } 
+        else if (in_identifier) {
+            ;
+        }
+        else {
+            ;
+        }
+
 
         // append character to buffer
         buffer[buffer_pos++] = c;
