@@ -1,5 +1,4 @@
 from enum import Enum
-from multiprocessing.dummy import Value
 
 
 class TokenType(Enum):
