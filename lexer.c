@@ -8,64 +8,6 @@
 
 static const char FILE_PATH[] = "examples/valid/return_3.c";
 
-enum TokenType {
-    OPEN_BRACE = 1,
-    CLOSE_BRACE,
-    OPEN_PARENTHESIS,
-    CLOSE_PARENTHESIS,
-    SEMICOLON,
-    INT_KEYWORD,
-    RETURN_KEYWORD,
-    IDENTIFIER,
-    INTEGER_LITERAL_DECIMAL,
-    INTEGER_LITERAL_HEXA,
-    UNKNOWN
-};
-
-const char* get_token_type(enum TokenType type) 
-{
-   switch (type) 
-   {
-        case CLOSE_BRACE: return "CLOSE_BRACE";
-        case OPEN_PARENTHESIS: return "OPEN_PARENTHESIS";
-        case CLOSE_PARENTHESIS: return "CLOSE_PARENTHESIS";
-        case SEMICOLON: return "SEMICOLON";
-        case INT_KEYWORD: return "INT_KEYWORD";
-        case RETURN_KEYWORD: return "RETURN_KEYWORD";
-        case IDENTIFIER: return "IDENTIFIER";
-        case INTEGER_LITERAL_DECIMAL: return "INTEGER_LITERAL_DECIMAL";
-        case INTEGER_LITERAL_HEXA: return "INTEGER_LITERAL_HEXA";
-        case UNKNOWN: return "UNKNOWN";
-        default: return "UNDEFINED";
-   }
-}
-
-typedef struct token_data {
-    char *token_text;
-    int token_type;
-    struct token_data *next;
-} Token;
-
-Token *createToken(char *s) {
-    Token *newToken = (Token *)malloc(sizeof(Token));
-    newToken->token_text = s;
-    newToken->next = NULL;
-    return newToken;
-}
-
-
-void insert(Token **link, Token *newToken) {
-    newToken->next = *link;
-    *link = newToken;
-}
-
-void printTokens(Token *head) {
-    while (head != NULL) {
-        printf("%s  ->  %s\n", head->token_text, get_token_type(head->token_type));
-        head = head->next;
-    }
-}
-
 
 int is_space(char c) {
     return c == ' ' || c == '\n' || c == '\t';
@@ -104,7 +46,7 @@ int is_hexa(char *s, int size) {
         return 0;
     }
 
-    for (int i = 2; i < size; i++) {
+    for (int i = 2; i <= size; i++) {
         if (!isxdigit(s[i])) {
             return 0;
         } 
@@ -122,7 +64,7 @@ int is_identifier(char *s, int size) {
         return 0;
     }
 
-    for (int i = 1; i < size; i++) {
+    for (int i = 1; i <= size; i++) {
         if (!is_digit(s[i]) && !is_letter(s[i]) && !is_underscore(s[i])) {
             return 0;
         } 
@@ -131,12 +73,120 @@ int is_identifier(char *s, int size) {
     return 1;
 }
 
+int is_decimal(char *s, int size) {
+    if (size < 1) {
+        return 0;
+    }
+
+    for (int i = 1; i <= size; i++) {
+        if (!is_digit(s[i])) {
+            return 0;
+        } 
+    }
+
+    return 1;
+}
 
 
+enum TokenType {
+    OPEN_BRACE = 1,
+    CLOSE_BRACE,
+    OPEN_PARENTHESIS,
+    CLOSE_PARENTHESIS,
+    SEMICOLON,
+    INT_KEYWORD,
+    RETURN_KEYWORD,
+    IDENTIFIER,
+    INTEGER_LITERAL_DECIMAL,
+    INTEGER_LITERAL_HEXA,
+    UNKNOWN
+};
 
-
-int main(void)
+const char* get_token_type(enum TokenType type) 
 {
+   switch (type) 
+   {
+        case CLOSE_BRACE: return "CLOSE_BRACE";
+        case OPEN_PARENTHESIS: return "OPEN_PARENTHESIS";
+        case CLOSE_PARENTHESIS: return "CLOSE_PARENTHESIS";
+        case SEMICOLON: return "SEMICOLON";
+        case INT_KEYWORD: return "INT_KEYWORD";
+        case RETURN_KEYWORD: return "RETURN_KEYWORD";
+        case IDENTIFIER: return "IDENTIFIER";
+        case INTEGER_LITERAL_DECIMAL: return "INTEGER_LITERAL_DECIMAL";
+        case INTEGER_LITERAL_HEXA: return "INTEGER_LITERAL_HEXA";
+        case UNKNOWN: return "UNKNOWN";
+        default: return "UNDEFINED";
+   }
+}
+
+
+int map_token_type(char *s) {
+    if (!strcmp(s, "{")) {
+        return OPEN_BRACE;
+    }
+    else if (!strcmp(s, "}")) {
+        return CLOSE_BRACE;
+    } 
+    else if (!strcmp(s, "(")) {
+        return OPEN_PARENTHESIS;
+    }
+    else if (!strcmp(s, ")")) {
+        return CLOSE_PARENTHESIS;
+    }
+    else if (!strcmp(s, ";")) {
+        return SEMICOLON;
+    }
+    else if (!strcmp(s, "int")) {
+        return INT_KEYWORD;
+    }
+    else if (!strcmp(s, "return")) {
+        return RETURN_KEYWORD;
+    }
+    else if (is_identifier(s, strlen(s))) {
+        return IDENTIFIER;
+    }
+    else if (is_decimal(s, strlen(s))) {
+        return INTEGER_LITERAL_DECIMAL;
+    }
+    else if (is_hexa(s, strlen(s))) {
+        return INTEGER_LITERAL_HEXA;
+    }
+    else {
+        return UNKNOWN;
+    }
+}
+
+
+typedef struct token_data {
+    char *token_text;
+    int token_type;
+    struct token_data *next;
+} Token;
+
+Token *createToken(char *s) {
+    Token *newToken = (Token *)malloc(sizeof(Token));
+    newToken->token_text = s;
+    newToken->token_type = map_token_type(s);
+    newToken->next = NULL;
+    return newToken;
+}
+
+
+void insert(Token **link, Token *newToken) {
+    newToken->next = *link;
+    *link = newToken;
+}
+
+void printTokens(Token *head) {
+    while (head != NULL) {
+        printf("%s  ->  %s\n", head->token_text, get_token_type(head->token_type));
+        head = head->next;
+    }
+}
+
+
+int tokenize(const char *file_path) {
     FILE *file;
     char c;
 
@@ -158,7 +208,7 @@ int main(void)
     int in_quotes = 0;
     int in_identifier = 0;
 
-    file = fopen(FILE_PATH, "r");
+    file = fopen(file_path, "r");
 
     t = createToken("root");
     insert(&head, t);
@@ -373,5 +423,13 @@ int main(void)
     }
     free(strings);
 
+    return 0;
+}
+
+
+
+int main(void)
+{
+    int result = tokenize(FILE_PATH);
     return 0;
 }
