@@ -83,13 +83,11 @@ def tokenize(file_path):
             else:
                 raise ValueError("Tokenizer (in-digit) got an unidentified character!")
         elif in_quotes:
+            buffer += c
             if is_double_quotes(c):
-                buffer += c
                 tokens.append(buffer)
                 buffer = ""
                 in_quotes = False
-            else:
-                buffer += c
         elif in_identifier:
             if is_digit(c) or is_letter(c) or is_underscore(c):
                 buffer += c
