@@ -21,6 +21,24 @@ enum TokenType {
     UNKNOWN
 };
 
+const char* get_token_type(enum TokenType type) 
+{
+   switch (type) 
+   {
+        case CLOSE_BRACE: return "CLOSE_BRACE";
+        case OPEN_PARENTHESIS: return "OPEN_PARENTHESIS";
+        case CLOSE_PARENTHESIS: return "CLOSE_PARENTHESIS";
+        case SEMICOLON: return "SEMICOLON";
+        case INT_KEYWORD: return "INT_KEYWORD";
+        case RETURN_KEYWORD: return "RETURN_KEYWORD";
+        case IDENTIFIER: return "IDENTIFIER";
+        case INTEGER_LITERAL_DECIMAL: return "INTEGER_LITERAL_DECIMAL";
+        case INTEGER_LITERAL_HEXA: return "INTEGER_LITERAL_HEXA";
+        case UNKNOWN: return "UNKNOWN";
+        default: return "UNDEFINED";
+   }
+}
+
 typedef struct token_data {
     char *token_text;
     int token_type;
@@ -42,7 +60,7 @@ void insert(Token **link, Token *newToken) {
 
 void printTokens(Token *head) {
     while (head != NULL) {
-        printf("%s  ->  %d\n", head->token_text, head->token_type);
+        printf("%s  ->  %s\n", head->token_text, get_token_type(head->token_type));
         head = head->next;
     }
 }
