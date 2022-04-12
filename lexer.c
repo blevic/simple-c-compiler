@@ -1,9 +1,20 @@
 #include <stdio.h>
+#include <string.h>
 
-static const char FILE_PATH[] = "examples/return_3.c";
+static const char FILE_PATH[] = "examples/valid/return_3.c";
 
-enum Tokens {
-    OPEN_BRACE = 0, CLOSE_BRACE, OPEN_PAR, CLOSE_PAR, SEMICOLON, INT_KW, RET_KW, IDENTIFIER, INT_LITERAL
+enum TokenType {
+    OPEN_BRACE = 1,
+    CLOSE_BRACE,
+    OPEN_PARENTHESIS,
+    CLOSE_PARENTHESIS,
+    SEMICOLON,
+    INT_KEYWORD,
+    RETURN_KEYWORD,
+    IDENTIFIER,
+    INTEGER_LITERAL_DECIMAL,
+    INTEGER_LITERAL_HEXA,
+    UNKNOWN
 };
 
 int main(void)
