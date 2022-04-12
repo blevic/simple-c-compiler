@@ -60,52 +60,52 @@ def tokenize(file_path):
     in_identifier = False
 
     tokens = []
-    _token = ""
+    buffer = ""
 
     for i in range(len(flat)):
         c = flat[i]
         if in_digit:
             if is_digit(c) or is_letter(c):
-                _token += c # lexical errors will be treated later
+                buffer += c # lexical errors will be treated later
             elif is_space(c):
-                tokens.append(_token)
-                _token = ""
+                tokens.append(buffer)
+                buffer = ""
                 in_digit = False
             elif is_double_quotes(c):
-                tokens.append(_token)
-                _token = c
+                tokens.append(buffer)
+                buffer = c
                 in_digit = False
                 in_quotes = True
             elif is_special(c):
-                tokens.append(_token)
-                _token = ""
+                tokens.append(buffer)
+                buffer = ""
                 tokens.append(c)
                 in_digit = False
             else:
                 raise ValueError("Tokenizer (in-digit) got an unidentified character!")
         elif in_quotes:
             if is_double_quotes(c):
-                _token += c
-                tokens.append(_token)
-                _token = ""
+                buffer += c
+                tokens.append(buffer)
+                buffer = ""
                 in_quotes = False
             else:
-                _token += c
+                buffer += c
         elif in_identifier:
             if is_digit(c) or is_letter(c) or is_underscore(c):
-                _token += c
+                buffer += c
             elif is_space(c):
-                tokens.append(_token)
-                _token = ""
+                tokens.append(buffer)
+                buffer = ""
                 in_identifier = False
             elif is_double_quotes(c):
-                tokens.append(_token)
-                _token = c
+                tokens.append(buffer)
+                buffer = c
                 in_identifier = False
                 in_quotes = True
             elif is_special(c):
-                tokens.append(_token)
-                _token = ""
+                tokens.append(buffer)
+                buffer = ""
                 tokens.append(c)
                 in_identifier = False
             else:
@@ -115,20 +115,20 @@ def tokenize(file_path):
                 pass
             elif is_digit(c):
                 in_digit = True
-                _token += c
+                buffer += c
             elif is_double_quotes(c):
                 in_quotes = True
-                _token += c
+                buffer += c
             elif is_letter(c) or is_underscore(c):
                 in_identifier = True
-                _token += c
+                buffer += c
             elif is_special(c):
                 tokens.append(c)
             else:
                 raise ValueError("Tokenizer (first-digit) got an unidentified character!")
 
-    if _token != "":
-        tokens.append(_token)
+    if buffer != "":
+        tokens.append(buffer)
     return tokens
 
 
