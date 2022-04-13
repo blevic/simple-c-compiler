@@ -1,3 +1,4 @@
+import os
 from enum import Enum
 
 
@@ -164,6 +165,6 @@ def lex(file_path):
 
 
 if __name__ == '__main__':
-    file = "examples/valid/multi_digit.c"
+    file = os.path.join(os.path.dirname(__file__), os.pardir, 'examples/valid/multi_digit.c')
     for e in lex(file):
         print(e.text, "  ->  " , e.type)
