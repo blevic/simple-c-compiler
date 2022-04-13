@@ -5,40 +5,30 @@ import os
 class TestLexer(unittest.TestCase):
     
     def test_tokenize(self):
-        path_valid = "examples/valid/"
-        path_invalid = "examples/invalid/"
-        path_extra = "examples/extra/"
-
-        valid_files = [path_valid + f for f in os.listdir(path_valid) if f.endswith(".c")]
-        invalid_files = [path_invalid + f for f in os.listdir(path_invalid) if f.endswith(".c")]
-        extra_files = [path_extra + f for f in os.listdir(path_extra) if f.endswith(".c")]
+        paths = ["examples/valid/", "examples/invalid/"]
+        files = [path + f for path in paths for f in os.listdir(path) if f.endswith(".c")]
         
-        for f in valid_files + invalid_files:
-            tokens_text = lexer.tokenize(f)
+        for file in files:
+            tokens_text = lexer.tokenize(file)
             self.assertTrue(tokens_text)
             self.assertIsInstance(tokens_text, list)
             self.assertTrue(all(t and isinstance(t, str) for t in tokens_text))
 
     def test_is_hexa(self):
-        self.assertTrue(lexer.is_hexa('0x1945abcDC'))
-        self.assertTrue(lexer.is_hexa('0X123'))
-        self.assertTrue(lexer.is_hexa('0x00a'))
-        self.assertFalse(lexer.is_hexa('0x123abcdefg'))
-        self.assertFalse(lexer.is_hexa('0xx'))
-        self.assertFalse(lexer.is_hexa('0x'))
-        self.assertFalse(lexer.is_hexa('00x12'))
+        valid = ['0x1945abcDC', '0X123', '0x00a', '0X1', '0x123AbCdEf', '0XA', '0x0CFC', '0x0']
+        invalid = ['0x123abcdefg', '0xx', '0x', '00x12', '01x1', '1x0', '0x0156I0, 0b0', '0', '123']
+
+        for hex in valid:
+            self.assertTrue(lexer.is_hexa(hex))
+        for not_hex in invalid:
+            self.assertFalse(lexer.is_hexa(not_hex))
 
     def test_lex(self):
-        path_valid = "examples/valid/"
-        path_invalid = "examples/invalid/"
-        path_extra = "examples/extra/"
-
-        valid_files = [path_valid + f for f in os.listdir(path_valid) if f.endswith(".c")]
-        invalid_files = [path_invalid + f for f in os.listdir(path_invalid) if f.endswith(".c")]
-        extra_files = [path_extra + f for f in os.listdir(path_extra) if f.endswith(".c")]
+        paths = ["examples/valid/", "examples/invalid/"]
+        files = [path + f for path in paths for f in os.listdir(path) if f.endswith(".c")]
         
-        for f in valid_files + invalid_files:
-            tokens = lexer.lex(f)
+        for file in files:
+            tokens = lexer.lex(file)
             self.assertTrue(tokens)
             self.assertIsInstance(tokens, list)
             self.assertTrue(all(t.text and isinstance(t.text, str) for t in tokens))
