@@ -48,7 +48,9 @@ int is_underscore(char c) {
     return c == '_';
 }
 
-int is_hexa(char *s, int size) {
+int is_hexa(char *s) {
+    int size = strlen(s);
+
     if (size < 3) {
         return 0;
     }
@@ -66,7 +68,9 @@ int is_hexa(char *s, int size) {
     return 1;
 }
 
-int is_identifier(char *s, int size) {
+int is_identifier(char *s) {
+    int size = strlen(s);
+
     if (size < 1) {
         return 0;
     }
@@ -84,7 +88,9 @@ int is_identifier(char *s, int size) {
     return 1;
 }
 
-int is_decimal(char *s, int size) {
+int is_decimal(char *s) {
+    int size = strlen(s);
+
     if (size < 1) {
         return 0;
     }
@@ -155,13 +161,13 @@ int map_token_type(char *s) {
     else if (!strcmp(s, "return")) {
         return RETURN_KEYWORD;
     }
-    else if (is_identifier(s, strlen(s))) {
+    else if (is_identifier(s)) {
         return IDENTIFIER;
     }
-    else if (is_decimal(s, strlen(s))) {
+    else if (is_decimal(s)) {
         return INTEGER_LITERAL_DECIMAL;
     }
-    else if (is_hexa(s, strlen(s))) {
+    else if (is_hexa(s)) {
         return INTEGER_LITERAL_HEXA;
     }
     else {
@@ -397,6 +403,7 @@ Token tokenize(const char *file_path) {
 int main(void)
 {
     int n_files =  sizeof(FILE_PATHS)/sizeof(FILE_PATHS[0]);
+    n_files = 2;
 
     for (int i = 0; i < n_files; i++){
         Token result = tokenize(FILE_PATHS[i]);
