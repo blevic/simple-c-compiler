@@ -218,7 +218,7 @@ Token *append(char *buf, char **strings, int i, Token *tail) {
 }
 
 
-Token tokenize(const char *file_path) {
+Token* tokenize(const char *file_path) {
     FILE *file;
     char c;
 
@@ -290,7 +290,7 @@ Token tokenize(const char *file_path) {
             }
             else {
                 printf("Tokenizer (in-digit) got an unidentified character!\n");
-                return *tail->next;
+                return tail->next;
             }
         }
         else if (in_quotes) {
@@ -344,7 +344,7 @@ Token tokenize(const char *file_path) {
             }
             else {
                 printf("Tokenizer (in-identifier) got an unidentified character!\n");
-                return *tail->next;
+                return tail->next;
             }
         }
         else {
@@ -377,7 +377,7 @@ Token tokenize(const char *file_path) {
             }
             else {
                 printf("Tokenizer (first-digit) got an unidentified character!\n");
-                return *tail->next;
+                return tail->next;
             }
         }
 
@@ -395,7 +395,7 @@ Token tokenize(const char *file_path) {
     //}
     //free(strings);
 
-    return *head->next;
+    return head;
 }
 
 
@@ -406,8 +406,8 @@ int main(void)
     n_files = 2;
 
     for (int i = 0; i < n_files; i++){
-        Token result = tokenize(FILE_PATHS[i]);
-        print_tokens(&result);
+        Token* result = tokenize(FILE_PATHS[i]);
+        print_tokens(result);
     }
     return 0;
 }
