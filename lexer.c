@@ -417,7 +417,7 @@ int tokenize(const char *file_path) {
 
     fclose(file);
 
-    print_tokens(head);
+    print_tokens(head->next);
 
     for (int i = 0; i < MAX_TOKENS; i++) {
         free(strings[i]);
