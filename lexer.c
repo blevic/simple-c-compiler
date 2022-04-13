@@ -6,7 +6,18 @@
 #define BUFFER_SIZE 2048
 #define MAX_TOKENS 1000
 
-static const char FILE_PATH[] = "examples/valid/return_3.c";
+static const char FILE_PATHS[][50] = {"examples/invalid/missing_paren.c",
+                                      "examples/invalid/missing_retval.c",
+                                      "examples/invalid/no_brace.c",
+                                      "examples/invalid/no_semicolon.c",
+                                      "examples/invalid/no_space.c",
+                                      "examples/invalid/wrong_case.c",
+                                      "examples/valid/multi_digit.c",
+                                      "examples/valid/newlines.c",
+                                      "examples/valid/no_newlines.c",
+                                      "examples/valid/return_0.c",
+                                      "examples/valid/return_2.c",
+                                      "examples/valid/return_3.c"};
 
 
 int is_space(char c) {
@@ -188,7 +199,20 @@ void print_tokens(Token *head) {
 }
 
 
-int tokenize(const char *file_path) {
+Token *append(char *buf, char **strings, int i, Token *tail) {
+    
+    strings[i] = malloc(strlen(buf)*sizeof(char));
+    strcpy(strings[i], buf);
+
+    Token* t = createToken(strings[i++]);
+    insert(&tail->next, t);
+    tail = t;
+
+    return tail;
+}
+
+
+Token tokenize(const char *file_path) {
     FILE *file;
     char c;
 
@@ -199,8 +223,6 @@ int tokenize(const char *file_path) {
     int token_count = 0;
     char **strings;
     strings = malloc(MAX_TOKENS * sizeof (char *));
-
-    int length;
 
     char buffer[BUFFER_SIZE];
     int buffer_pos = 0;
@@ -229,12 +251,7 @@ int tokenize(const char *file_path) {
                 buffer[buffer_pos] = '\0';
             }
             else if (is_space(c)) {
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos] = '\0';
@@ -242,12 +259,7 @@ int tokenize(const char *file_path) {
                 in_digit = 0;
             }
             else if (is_double_quotes((c))) {
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos++] = c;
@@ -257,23 +269,13 @@ int tokenize(const char *file_path) {
                 in_quotes = 1;
             }
             else if (is_special(c)) {
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos++] = c;
                 buffer[buffer_pos] = '\0';
 
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos] = '\0';
@@ -282,19 +284,14 @@ int tokenize(const char *file_path) {
             }
             else {
                 printf("Tokenizer (in-digit) got an unidentified character!\n");
-                return -1;
+                return *tail->next;
             }
         }
         else if (in_quotes) {
             buffer[buffer_pos++] = c;
             buffer[buffer_pos] = '\0';
             if (is_double_quotes(c)) {
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos] = '\0';
@@ -308,12 +305,7 @@ int tokenize(const char *file_path) {
                 buffer[buffer_pos] = '\0';
             }
             else if (is_space(c)) {
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos] = '\0';
@@ -321,12 +313,7 @@ int tokenize(const char *file_path) {
                 in_identifier = 0;
             }
             else if (is_double_quotes(c)) {
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos++] = c;
@@ -336,23 +323,13 @@ int tokenize(const char *file_path) {
                 in_quotes = 1;
             }
             else if (is_special(c)) {
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos++] = c;
                 buffer[buffer_pos] = '\0';
 
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos] = '\0';
@@ -361,7 +338,7 @@ int tokenize(const char *file_path) {
             }
             else {
                 printf("Tokenizer (in-identifier) got an unidentified character!\n");
-                return -1;
+                return *tail->next;
             }
         }
         else {
@@ -387,19 +364,14 @@ int tokenize(const char *file_path) {
                 buffer[buffer_pos++] = c;
                 buffer[buffer_pos] = '\0';
 
-                length = strlen(buffer);
-                strings[token_count] = malloc(length*sizeof(char));
-                strcpy(strings[token_count], buffer);
-                t = createToken(strings[token_count++]);
-                insert(&tail->next, t);
-                tail = t;
+                tail = append(buffer, strings, token_count++, tail);
 
                 buffer_pos = 0;
                 buffer[buffer_pos] = '\0';
             }
             else {
                 printf("Tokenizer (first-digit) got an unidentified character!\n");
-                return -1;
+                return *tail->next;
             }
         }
 
@@ -407,30 +379,28 @@ int tokenize(const char *file_path) {
     }
 
     if (buffer[buffer_pos] != '\0') {
-        length = strlen(buffer);
-        strings[token_count] = malloc(length*sizeof(char));
-        strcpy(strings[token_count], buffer);
-        t = createToken(strings[token_count++]);
-        insert(&tail->next, t);
-        tail = t;
+        tail = append(buffer, strings, token_count++, tail);
     } 
 
     fclose(file);
 
-    print_tokens(head->next);
+    //for (int i = 0; i < MAX_TOKENS; i++) {
+    //    free(strings[i]);
+    //}
+    //free(strings);
 
-    for (int i = 0; i < MAX_TOKENS; i++) {
-        free(strings[i]);
-    }
-    free(strings);
-
-    return 0;
+    return *head->next;
 }
 
 
 
 int main(void)
 {
-    int result = tokenize(FILE_PATH);
+    int n_files =  sizeof(FILE_PATHS)/sizeof(FILE_PATHS[0]);
+
+    for (int i = 0; i < n_files; i++){
+        Token result = tokenize(FILE_PATHS[i]);
+        print_tokens(&result);
+    }
     return 0;
 }
