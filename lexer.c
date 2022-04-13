@@ -46,7 +46,7 @@ int is_hexa(char *s, int size) {
         return 0;
     }
 
-    for (int i = 2; i <= size; i++) {
+    for (int i = 2; i < size; i++) {
         if (!isxdigit(s[i])) {
             return 0;
         } 
@@ -60,11 +60,11 @@ int is_identifier(char *s, int size) {
         return 0;
     }
 
-    if (!is_letter(s[0] && !is_underscore(s[0]))) {
+    if (!is_letter(s[0]) && !is_underscore(s[0])) {
         return 0;
     }
 
-    for (int i = 1; i <= size; i++) {
+    for (int i = 1; i < size; i++) {
         if (!is_digit(s[i]) && !is_letter(s[i]) && !is_underscore(s[i])) {
             return 0;
         } 
@@ -78,7 +78,7 @@ int is_decimal(char *s, int size) {
         return 0;
     }
 
-    for (int i = 1; i <= size; i++) {
+    for (int i = 0; i < size; i++) {
         if (!is_digit(s[i])) {
             return 0;
         } 
@@ -106,6 +106,7 @@ const char* get_token_type(enum TokenType type)
 {
    switch (type) 
    {
+        case OPEN_BRACE: return "OPEN_BRACE";
         case CLOSE_BRACE: return "CLOSE_BRACE";
         case OPEN_PARENTHESIS: return "OPEN_PARENTHESIS";
         case CLOSE_PARENTHESIS: return "CLOSE_PARENTHESIS";
@@ -178,7 +179,8 @@ void insert(Token **link, Token *newToken) {
     *link = newToken;
 }
 
-void printTokens(Token *head) {
+void print_tokens(Token *head) {
+    printf("\nTokens:\n");
     while (head != NULL) {
         printf("%s  ->  %s\n", head->token_text, get_token_type(head->token_type));
         head = head->next;
@@ -210,7 +212,7 @@ int tokenize(const char *file_path) {
 
     file = fopen(file_path, "r");
 
-    t = createToken("root");
+    t = createToken(".");
     insert(&head, t);
     tail = t;
 
@@ -415,8 +417,7 @@ int tokenize(const char *file_path) {
 
     fclose(file);
 
-    printf("\n\n");
-    printTokens(head);
+    print_tokens(head);
 
     for (int i = 0; i < MAX_TOKENS; i++) {
         free(strings[i]);
