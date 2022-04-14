@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "lexer.h"
 
 #define BUFFER_SIZE 2048
 #define MAX_TOKENS 1000
@@ -175,12 +176,6 @@ int map_token_type(char *s) {
     }
 }
 
-
-typedef struct token_data {
-    char *token_text;
-    int token_type;
-    struct token_data *next;
-} Token;
 
 Token *create_token(char *s) {
     Token *new_token = (Token *)malloc(sizeof(Token));
