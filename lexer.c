@@ -182,18 +182,18 @@ typedef struct token_data {
     struct token_data *next;
 } Token;
 
-Token *createToken(char *s) {
-    Token *newToken = (Token *)malloc(sizeof(Token));
-    newToken->token_text = s;
-    newToken->token_type = map_token_type(s);
-    newToken->next = NULL;
-    return newToken;
+Token *create_token(char *s) {
+    Token *new_token = (Token *)malloc(sizeof(Token));
+    new_token->token_text = s;
+    new_token->token_type = map_token_type(s);
+    new_token->next = NULL;
+    return new_token;
 }
 
 
-void insert(Token **link, Token *newToken) {
-    newToken->next = *link;
-    *link = newToken;
+void insert(Token **link, Token *new_token) {
+    new_token->next = *link;
+    *link = new_token;
 }
 
 void print_tokens(Token *head) {
@@ -208,7 +208,7 @@ Token *first_node(char *buf, char **strings, int i, Token *head) {
     strings[i] = malloc(strlen(buf)*sizeof(char));
     strcpy(strings[i], buf);
 
-    Token* t = createToken(strings[i]);
+    Token* t = create_token(strings[i]);
     insert(&head, t);
 
     return t;
@@ -218,7 +218,7 @@ Token *append(char *buf, char **strings, int i, Token *tail) {
     strings[i] = malloc(strlen(buf)*sizeof(char));
     strcpy(strings[i], buf);
 
-    Token* t = createToken(strings[i]);
+    Token* t = create_token(strings[i]);
     insert(&tail->next, t);
 
     return t;
