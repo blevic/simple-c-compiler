@@ -204,17 +204,24 @@ void print_tokens(Token *head) {
     }
 }
 
-
-Token *append(char *buf, char **strings, int i, Token *tail) {
-    
+Token *first_node(char *buf, char **strings, int i, Token *head) {
     strings[i] = malloc(strlen(buf)*sizeof(char));
     strcpy(strings[i], buf);
 
-    Token* t = createToken(strings[i++]);
-    insert(&tail->next, t);
-    tail = t;
+    Token* t = createToken(strings[i]);
+    insert(&head, t);
 
-    return tail;
+    return t;
+}
+
+Token *append(char *buf, char **strings, int i, Token *tail) {
+    strings[i] = malloc(strlen(buf)*sizeof(char));
+    strcpy(strings[i], buf);
+
+    Token* t = createToken(strings[i]);
+    insert(&tail->next, t);
+
+    return t;
 }
 
 
@@ -224,7 +231,6 @@ Token* tokenize(const char *file_path) {
 
     Token *head = NULL;
     Token *tail = NULL;
-    Token *t;
 
     int token_count = 0;
     char **strings;
@@ -240,9 +246,8 @@ Token* tokenize(const char *file_path) {
 
     file = fopen(file_path, "r");
 
-    t = createToken(".");
-    insert(&head, t);
-    tail = t;
+    head = first_node("", strings, token_count, head);
+    tail = head;
 
     while (1) {
         c = fgetc(file);
@@ -395,7 +400,7 @@ Token* tokenize(const char *file_path) {
     //}
     //free(strings);
 
-    return head;
+    return head->next;
 }
 
 
