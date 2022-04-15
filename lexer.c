@@ -403,7 +403,6 @@ Token* tokenize(const char *file_path) {
 int main(void)
 {
     int n_files =  sizeof(FILE_PATHS)/sizeof(FILE_PATHS[0]);
-    n_files = 2;
 
     for (int i = 0; i < n_files; i++){
         Token* result = tokenize(FILE_PATHS[i]);
