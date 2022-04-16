@@ -1,2 +1,10 @@
-lexer
+# Ignore files without extension
+*
+!*.*
+
+# Ignore python bytecode files
 *.pyc
+
+# Ignore hidden files
+.*
+!/.gitignore
