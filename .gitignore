@@ -8,3 +8,6 @@
 # Ignore hidden files
 .*
 !/.gitignore
+!.gitkeep
+
+!src
