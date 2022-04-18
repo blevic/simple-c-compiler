@@ -104,6 +104,24 @@ Token *append(char *buf, char **strings, int i, Token *tail) {
     return t;
 }
 
+void free_null_strings(char** strings){
+    for (int i = 0; i < MAX_TOKENS; i++) {
+        if (strings[i] == NULL) {
+            free(strings[i]);
+        }
+    }
+}
+
+void free_tokens(Token *head){
+    Token* tmp;
+
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp->token_text);
+        free(tmp);
+    }
+}
 
 Token* tokenize(const char *file_path) {
     FILE *file;
@@ -275,14 +293,16 @@ Token* tokenize(const char *file_path) {
 
     fclose(file);
 
-    //for (int i = 0; i < MAX_TOKENS; i++) {
-    //    free(strings[i]);
-    //}
-    //free(strings);
+    Token* tmp = head;
+    head = head->next;
+    
+    free(tmp->token_text);
+    free(tmp);
 
-    return head->next;
+    free_null_strings(strings);
+
+    return head;
 }
-
 
 
 int main(void)
@@ -290,8 +310,10 @@ int main(void)
     int n_files =  sizeof(FILE_PATHS)/sizeof(FILE_PATHS[0]);
 
     for (int i = 0; i < n_files; i++){
-        Token* result = tokenize(FILE_PATHS[i]);
-        print_tokens(result);
+        Token* head = tokenize(FILE_PATHS[i]);
+        print_tokens(head);
+        free_tokens(head);
     }
+
     return 0;
 }
