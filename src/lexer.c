@@ -5,8 +5,7 @@
 #include "lexer_aux.h"
 
 
-const char* get_token_type(enum TokenType type) 
-{
+const char* get_token_type(enum TokenType type) {
    switch (type) 
    {
         case OPEN_BRACE: return "OPEN_BRACE";
@@ -76,6 +75,7 @@ void insert(Token **link, Token *new_token) {
     *link = new_token;
 }
 
+
 void print_tokens(Token *head) {
     printf("\nTokens:\n");
     while (head != NULL) {
@@ -83,6 +83,7 @@ void print_tokens(Token *head) {
         head = head->next;
     }
 }
+
 
 Token *first_node(char *buf, char **strings, int i, Token *head) {
     strings[i] = malloc(strlen(buf)*sizeof(char));
@@ -94,6 +95,7 @@ Token *first_node(char *buf, char **strings, int i, Token *head) {
     return t;
 }
 
+
 Token *append(char *buf, char **strings, int i, Token *tail) {
     strings[i] = malloc(strlen(buf)*sizeof(char));
     strcpy(strings[i], buf);
@@ -104,7 +106,8 @@ Token *append(char *buf, char **strings, int i, Token *tail) {
     return t;
 }
 
-void free_null_strings(char** strings){
+
+void free_null_strings(char** strings) {
     for (int i = 0; i < MAX_TOKENS; i++) {
         if (strings[i] == NULL) {
             free(strings[i]);
@@ -112,7 +115,8 @@ void free_null_strings(char** strings){
     }
 }
 
-void free_tokens(Token *head){
+
+void free_tokens(Token *head) {
     Token* tmp;
 
     while (head != NULL) {
@@ -122,6 +126,7 @@ void free_tokens(Token *head){
         free(tmp);
     }
 }
+
 
 Token* tokenize(const char *file_path) {
     FILE *file;
@@ -305,8 +310,7 @@ Token* tokenize(const char *file_path) {
 }
 
 
-int main(void)
-{
+int main() {
     int n_files =  sizeof(FILE_PATHS)/sizeof(FILE_PATHS[0]);
 
     for (int i = 0; i < n_files; i++){
